@@ -847,11 +847,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1969621781}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b411bf996d92b68428909e875813f5b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a7f231488fe14e24ba83fcb31461d0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallax: {fileID: 338843780}
-  cloud: {fileID: 0}
+  parallax: {fileID: 0}
+  initialMoveObject: {fileID: 0}
   speed: 15
 --- !u!4 &1969621783
 Transform:
