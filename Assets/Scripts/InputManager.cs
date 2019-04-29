@@ -40,7 +40,7 @@ public static class InputManager
 
     public static void Down(string buttonName, Action<Vector3> callback)
     {
-        if (Input.GetButtonDown(buttonName))
+        if (Input.GetButtonUp(buttonName))
         {
             Vector3 axis = Vector3.zero;
             if (buttonName.Equals("Horizontal"))

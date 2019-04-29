@@ -18,9 +18,10 @@ public class ParallaxInput : MonoBehaviour
     [Tooltip("The player rigidbody to move")]
     public GameObject player;
 
+    [Tooltip("You can pass Lanes game objects to teleport/move the player")]
     public GameObject[] lanes;
 
-    private List<GameObject> lanePlayer;
+    private List<GameObject> lanesWithPlayer;
 
     void Awake() 
     {
@@ -32,15 +33,15 @@ public class ParallaxInput : MonoBehaviour
 
         if (lanes.Length > 0)
         {
-            lanePlayer = new List<GameObject>();
+            lanesWithPlayer = new List<GameObject>();
             for (int i = 0; i < lanes.Length; i++)
             {
-                lanePlayer.Insert(i, null);
+                lanesWithPlayer.Insert(i, null);
             }
 
             if (player != null)
             {
-                lanePlayer[0] = player;
+                lanesWithPlayer[0] = player;
             }
         }
     }
@@ -64,7 +65,7 @@ public class ParallaxInput : MonoBehaviour
             {
                 parallax.Speed = -speed;
 
-                InputManager.DownHeld("Vertical", (result) => {
+                InputManager.Down("Vertical", (result) => {
 
                     if (result != Vector3.zero)
                     {
@@ -72,24 +73,32 @@ public class ParallaxInput : MonoBehaviour
                         if (lanes.Length > 0)
                         {
                             GameObject laneToMove;
-                            var indexCurrentLane = lanePlayer.FindIndex(p => p != null && p.Equals(player));
-                            if (result.y > 0)
+                            int indexLaneToMove;
+                            var indexCurrentLane = lanesWithPlayer.FindIndex(p => p != null && p.Equals(player));
+                            
+                            if (indexCurrentLane != -1)
                             {
-                               laneToMove = lanes[indexCurrentLane + 1];
-                            } else {
-                                laneToMove = lanes[indexCurrentLane - 1];
-                            }
+                                if (result.y > 0)
+                                {
+                                    indexLaneToMove = indexCurrentLane + 1;
+                                } else {
+                                    indexLaneToMove = indexCurrentLane - 1;
+                                }
                                 
-                            // lanes[indexPlayer].transform.position
-                            player.transform.position = new Vector2(
-                                player.transform.position.x,
-                                laneToMove.transform.position.y + 0.1f
-                            );
+                                if (indexLaneToMove >= 0 && indexLaneToMove < lanes.Length)
+                                {
+                                    laneToMove = lanes[indexLaneToMove];
+                                
+                                    player.transform.position = new Vector2(
+                                        player.transform.position.x,
+                                        laneToMove.transform.position.y + 0.15f
+                                    );
+                                    
+                                    lanesWithPlayer[indexLaneToMove] = player;
+                                    lanesWithPlayer[indexCurrentLane] = null;
+                                }  
+                            }
                         }
-
-                        // var y = result.y > 0 ? 62 : -62;
-
-                        // player.AddForce(new Vector2(0.0f, y));
                     }
                 });
                 
