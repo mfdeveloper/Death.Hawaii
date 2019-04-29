@@ -100,7 +100,7 @@ public class ParallaxInput : MonoBehaviour
                             }
                         }
                     }
-                });
+                }, player);
                 
             } else {
 

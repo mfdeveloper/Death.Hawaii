@@ -38,9 +38,14 @@ public static class InputManager
         }
     }
 
-    public static void Down(string buttonName, Action<Vector3> callback)
+    public static void Down(string buttonName, Action<Vector3> callback, GameObject objReference = null)
     {
-        if (Input.GetButtonUp(buttonName))
+        Vector3 position = GetTouchOrClick(buttonName, objReference);
+
+        if (position != Vector3.zero)
+        {
+            callback(position);
+        } else if (Input.GetButtonDown(buttonName))
         {
             Vector3 axis = Vector3.zero;
             if (buttonName.Equals("Horizontal"))
@@ -57,18 +62,21 @@ public static class InputManager
         }
     }
 
-    public static Vector3 GetTouchOrClick(string buttonName = "Horizontal") {
+    public static Vector3 GetTouchOrClick(string buttonName = "Horizontal", GameObject objReference = null) {
 
         Vector3 position = Vector3.zero;
 
         if (Input.touches.Length > 0) 
         {
+            
             Touch touch = Input.GetTouch(0);
             if (touch.phase == TouchPhase.Began)
             {
                 position = touch.position;
             }
-        } else if (Input.GetMouseButton(0)) {
+
+            //TODO: Refactor this to allow GetMouseButton too (For Horizontal movement)
+        } else if (Input.GetMouseButtonDown(0)) {
             position = Input.mousePosition;
         }
 
@@ -84,6 +92,24 @@ public static class InputManager
                 {
                     Debug.Log("RIGHT");
                     position = new Vector3(1, position.y);
+                }
+            }
+        } else if (buttonName.Equals("Vertical"))
+        {
+            if (position != Vector3.zero)
+            {
+                if (objReference != null)
+                {
+                    var worldPosition = Camera.main.ScreenToWorldPoint(position);
+                    if (worldPosition.y < objReference.transform.position.y)
+                    {
+                        Debug.Log("DOWN");
+                        position = new Vector3(position.x, -1);
+                    } else if (worldPosition.y > objReference.transform.position.y)
+                    {
+                        Debug.Log("UP");
+                        position = new Vector3(position.x, 1);
+                    }
                 }
             }
         }
