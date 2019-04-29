@@ -9,8 +9,14 @@ public class PlayerController : MonoBehaviour
     [Header("Attack")]
     public bool attackKill = true;
 
-    public Animator animator;
     protected HitBox attackHitBox;
+    
+    public Animator animator;
+
+    public delegate void RewardAction(int amount);
+    public event RewardAction OnKillEnemy;
+
+    protected int rewardsAmount = 0;
 
     void Awake() {
         attackHitBox = GetComponentInChildren<HitBox>();
@@ -65,9 +71,14 @@ public class PlayerController : MonoBehaviour
             {
                 // TODO: FreeParallax use the enemy object reference.
                 // Needs review this implementation
-                
+
                 // Destroy(enemy.gameObject);
                 enemy.gameObject.SetActive(false);
+                if(OnKillEnemy != null)
+                {
+                    OnKillEnemy(1);
+                }
+                rewardsAmount += 1;
             } else
             {
                 Debug.LogError("Only one attack kill is not implemented yet. Please, mark attackKill inspector property");
