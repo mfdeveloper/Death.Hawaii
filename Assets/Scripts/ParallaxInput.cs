@@ -15,7 +15,7 @@ public class ParallaxInput : MonoBehaviour
     [Tooltip("Is a infinite camera movement? Great to Infinite Runners games")]
     public bool infiniteMove = false;
 
-    [Tooltip("The player rigidbody to move")]
+    [Tooltip("The player gameobject to move")]
     public GameObject player;
 
     [Tooltip("You can pass Lanes game objects to teleport/move the player")]
