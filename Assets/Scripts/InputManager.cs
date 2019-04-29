@@ -13,7 +13,8 @@ public static class InputManager
     /// </summary>
     /// <param name="buttonName"></param>
     /// <param name="callback"></param>
-    public static void DownHeld(string buttonName, Action<Vector3> callback ) {
+    public static void DownHeld(string buttonName, Action<Vector3> callback ) 
+    {
         
         Vector3 position = GetTouchOrClick();
 
@@ -22,14 +23,41 @@ public static class InputManager
             callback(position);
         } else if(Input.GetButton(buttonName)) 
         {
-            var axis = new Vector3(Input.GetAxis(buttonName), 0.0f);
+            Vector3 axis = Vector3.zero;
+            if (buttonName.Equals("Horizontal"))
+            {
+                axis = new Vector3(Input.GetAxis(buttonName), 0.0f);
+            } else if (buttonName.Equals("Vertical"))
+            {
+                axis = new Vector3(0.0f, Input.GetAxis(buttonName));
+            }
+
             callback(axis);
         } else {
             callback(Vector3.zero);
         }
     }
 
-    public static Vector3 GetTouchOrClick() {
+    public static void Down(string buttonName, Action<Vector3> callback)
+    {
+        if (Input.GetButtonDown(buttonName))
+        {
+            Vector3 axis = Vector3.zero;
+            if (buttonName.Equals("Horizontal"))
+            {
+                axis = new Vector3(Input.GetAxis(buttonName), 0.0f);
+            } else if (buttonName.Equals("Vertical"))
+            {
+                axis = new Vector3(0.0f, Input.GetAxis(buttonName));
+            }
+
+            callback(axis);
+        } else {
+            callback(Vector3.zero);
+        }
+    }
+
+    public static Vector3 GetTouchOrClick(string buttonName = "Horizontal") {
 
         Vector3 position = Vector3.zero;
 
@@ -44,16 +72,19 @@ public static class InputManager
             position = Input.mousePosition;
         }
 
-        if (position != Vector3.zero)
-        {
-            if (position.x < Screen.width / 2)
+        if (buttonName.Equals("Horizontal"))
+        {    
+            if (position != Vector3.zero)
             {
-                Debug.Log("LEFT");
-                position = new Vector3(-1, position.y);
-            } else if (position.x > Screen.width / 2)
-            {
-                Debug.Log("RIGHT");
-                position = new Vector3(1, position.y);
+                if (position.x < Screen.width / 2)
+                {
+                    Debug.Log("LEFT");
+                    position = new Vector3(-1, position.y);
+                } else if (position.x > Screen.width / 2)
+                {
+                    Debug.Log("RIGHT");
+                    position = new Vector3(1, position.y);
+                }
             }
         }
 
