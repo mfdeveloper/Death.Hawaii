@@ -10,14 +10,57 @@ public class PlayerController : MonoBehaviour
     public bool attackKill = true;
 
     protected HitBox attackHitBox;
+
+    [FMODUnity.EventRef]
+    public string idleSfx;
     
+    [FMODUnity.EventRef]
+    public string attackSfx;
+
+    [FMODUnity.EventRef]
+    public string enemySfx;
     public Animator animator;
+
 
     public delegate void RewardAction(int amount);
     public event RewardAction OnKillEnemy;
 
     protected int rewardsAmount = 0;
 
+
+    protected FMOD.Studio.EventInstance idleSound;
+    protected FMOD.Studio.EventInstance attackSound;
+
+    protected FMOD.Studio.EventInstance enemySound;
+
+
+    void Start() {
+        
+        if (attackSfx != null)
+        {    
+            attackSound = FMODUnity.RuntimeManager.CreateInstance(attackSfx);
+        }
+
+        if (enemySfx != null)
+        {  
+            enemySound = FMODUnity.RuntimeManager.CreateInstance(enemySfx);
+        }
+
+        if (idleSfx != null)
+        {  
+            idleSound = FMODUnity.RuntimeManager.CreateInstance(idleSfx);
+
+            idleSound.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
+            idleSound.start();
+        }
+
+    }
+
+    void OnDestroy()
+    {
+        idleSound.release();
+        attackSound.release();
+    }
     void Awake() {
         attackHitBox = GetComponentInChildren<HitBox>();
 
@@ -51,7 +94,11 @@ public class PlayerController : MonoBehaviour
         if (animator != null)
         {
             animator.Play("Base Layer.PLAYER_ATTACK");
+
         }
+
+        attackSound.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
+        attackSound.start();
 
         if (attackHitBox != null)
         {
@@ -73,6 +120,13 @@ public class PlayerController : MonoBehaviour
                 // Needs review this implementation
 
                 // Destroy(enemy.gameObject);
+                //Plays sound
+            
+                enemySound.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(enemy.gameObject));
+                enemySound.start();
+                enemySound.release();
+                
+
                 enemy.gameObject.SetActive(false);
                 if(OnKillEnemy != null)
                 {
